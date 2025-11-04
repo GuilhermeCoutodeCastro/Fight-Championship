@@ -2,11 +2,17 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 
+# Verifica se os dados existem no session_state, se não, carrega-os
+if 'dados' not in st.session_state:
+    try:
+        st.session_state.dados = pd.read_csv("Dados.csv")
+    except Exception as e:
+        st.error(f"Erro ao carregar dados: {e}")
+        st.session_state.dados = pd.DataFrame()
 
-# Acessa os dados do session_state
-dados = st.session_state.dados
-Kenji_data = dados[dados['Nome'] == 'Kenji']
-
+# Filtra os dados para o Kenji
+Kenji_data = st.session_state.dados[st.session_state.dados['Nome'] == 'Kenji']
+st.page_link("pages/Lutadores.py", label="⬅️ Voltar para Lutadores", icon="🥋")
 st.title("Kenji 🥊")
 st.write("Bem-vindo à página dos lutadores!")
 
@@ -35,3 +41,22 @@ st.subheader("Descrição")
 
 
 st.write(Kenji_data.iloc[0]['Descrição'])
+
+
+
+
+st.markdown("---")
+st.markdown("### 🌳 Estrutura do Projeto")
+
+st.code("""
+Página Principal
+└── Lutadores
+    ├── Akira
+    ├── Arun
+    ├── Daigo
+    ├── Goro
+    ├── Hiro
+    ├── (Kenji)
+    ├── Mali
+    └── Surya
+""")
