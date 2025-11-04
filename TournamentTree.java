@@ -16,7 +16,7 @@ public class TournamentTree {
             this.id = ++counter;
         }
 
-        // Construtor para nó interno (recebe filhos)
+        // Construtor filhos
 
         Node(Node left, Node right) {
             this.left = left;
@@ -30,7 +30,7 @@ public class TournamentTree {
             return left == null && right == null;
         }
 
-        // reinicia o contador (usar antes de construir a árvore)
+        // reinicia o contador 
 
         static void resetCounter() {
             counter = 0;
@@ -40,7 +40,7 @@ public class TournamentTree {
         if (isLeaf()) {
             return String.format("Folha #%d: %s", id, player);
         } else {
-        // Se já houver vencedor, mostra só o nome; senão indica que ainda não foi definido
+        
 
             return String.format("Partida #%d: %s", id, 
             (winner == null ? "(a definir)" : winner));
@@ -50,10 +50,6 @@ public class TournamentTree {
 
     private Node root;
     private int leafCount = 0;
-
-    /**
-     * Constroi a árvore a partir da lista de participantes (completa para potência de 2 usando "BYE").
-     */
 
     public void buildFromList(List<String> players) {
         if (players == null || players.isEmpty()) throw new IllegalArgumentException("Lista vazia");
@@ -75,10 +71,7 @@ public class TournamentTree {
         root = nodes.get(0);
     }
 
-    /**
-     * Obtém as rodadas como listas de partidas (cada lista corresponde a uma rodada,
-     * iniciando da base (oitavas/1ª rodada) até a final).
-     */
+
 
     private List<List<Node>> getRounds() {
         List<List<Node>> rounds = new ArrayList<>();
@@ -96,7 +89,7 @@ public class TournamentTree {
             }
             if (!round.isEmpty()) rounds.add(round);
         }
-        Collections.reverse(rounds); // queremos da base até o topo
+        Collections.reverse(rounds); /
         return rounds;
     }
 
@@ -130,11 +123,9 @@ public class TournamentTree {
             }
             System.out.println();
         }
-        // campeão no root.winner
         return root.winner;
     }
 
-    // limpa winners recursivamente (para permitir múltiplas simulações no mesmo objeto)
 
     private void clearWinners(Node n) {
         if (n == null) return;
@@ -143,28 +134,26 @@ public class TournamentTree {
         clearWinners(n.right);
     }
 
-    // retorna o vencedor conhecido da subárvore (se for folha retorna player)
-    // assume que após simulação todos nós internos terão winner definidos.
+ 
 
     private String subtreeWinner(Node n) {
         if (n == null) return "BYE";
         if (n.isLeaf()) {
-            n.winner = n.player; // assegurar
+            n.winner = n.player; 
             return n.player;
         }
         if (n.winner != null) return n.winner;
-        // fallback: tente determinar a partir dos filhos (caso ainda não tenha sido simulado)
+        
 
         String l = subtreeWinner(n.left);
         String r = subtreeWinner(n.right);
         if ("BYE".equals(l)) return r;
         if ("BYE".equals(r)) return l;
-        // sem random aqui — mas este ramo só acontece se chamada antes da simulação completa
+
 
         return l; 
     }
 
-    // --------------- Percursos ---------------
 
     public String preOrder() {
         StringBuilder sb = new StringBuilder();
@@ -206,7 +195,7 @@ public class TournamentTree {
         return sb.toString();
     }
 
-    // --------------- Consultas estruturais ---------------
+
 
     public int height() {
         return height(root);
@@ -231,11 +220,6 @@ public class TournamentTree {
         return 1 + countNodes(n.left) + countNodes(n.right);
     }
 
-    // --------------- Análise entre jogadores (LCA e Caminho) ---------------
-
-    /**
-     * Encontra o nodo folha que contém exatamente o nome do jogador (comparação exata).
-     */
     private Node findLeafByName(Node n, String name) {
         if (n == null) return null;
         if (n.isLeaf()) return name.equals(n.player) ? n : null;
@@ -244,17 +228,12 @@ public class TournamentTree {
         return findLeafByName(n.right, name);
     }
 
-    /**
-     * Verifica se um jogador (nome) está contido na subárvore n.
-     */
+ 
     private boolean containsPlayer(Node n, String name) {
         return findLeafByName(n, name) != null;
     }
 
-    /**
-     * Encontra o Lowest Common Ancestor (LCA) dos dois nós folha correspondentes aos jogadores.
-     * Retorna null se algum jogador não for encontrado.
-     */
+
     public Node findLCA(String a, String b) {
         Node na = findLeafByName(root, a);
         Node nb = findLeafByName(root, b);
@@ -274,11 +253,7 @@ public class TournamentTree {
         return null;
     }
 
-    /**
-     * Retorna o caminho de partidas (lista de nós-match) que o jogador precisa vencer até a final.
-     * Se o jogador já foi eliminado na simulação, indica em qual partida caiu (o primeiro ancestor cujo winner != jogador).
-     * Retorna lista vazia se jogador não for encontrado.
-     */
+
     public List<Node> pathToFinal(String player) {
         Node leaf = findLeafByName(root, player);
         if (leaf == null) return Collections.emptyList();
@@ -295,10 +270,7 @@ public class TournamentTree {
         return path;
     }
 
-    /**
-     * Para uma partida (nodo interno) e um jogador que participa dela (em uma das subárvores),
-     * determina o oponente nessa partida (nome do vencedor da outra subárvore naquele momento).
-     */
+
     private String opponentInMatchForPlayer(Node match, String player) {
         if (match == null) return "(desconhecido)";
         if (containsPlayer(match.left, player)) {
@@ -310,7 +282,6 @@ public class TournamentTree {
         }
     }
 
-    // --------------- Utilitários para main ---------------
 
     private static String readLineTrim(Scanner sc) {
         String s = sc.nextLine();
@@ -318,7 +289,7 @@ public class TournamentTree {
         return s.trim();
     }
 
-    // --------------- Programa principal ---------------
+    
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -352,7 +323,7 @@ public class TournamentTree {
             players.add(name);
         }
 
-        // Ajusta para potência de 2 com BYE
+   
         int pow2 = 1;
         while (pow2 < players.size()) pow2 <<= 1;
         while (players.size() < pow2) players.add("BYE");
@@ -368,14 +339,14 @@ public class TournamentTree {
         System.out.println("===== CAMPEÃO: " + champion + " =====");
         System.out.println();
 
-        // Consultas estruturais
+        
         System.out.println("=== Consultas Estruturais ===");
         System.out.println("Altura da árvore: " + tree.height());
         System.out.println("Número de folhas (participantes): " + tree.getLeafCount());
         System.out.println("Número de nós internos (partidas): " + tree.getInternalCount());
         System.out.println();
 
-        // Percursos
+      
         System.out.println("=== Percursos (texto) ===");
         System.out.println("--- Pré-Ordem ---");
         System.out.print(tree.preOrder());
@@ -385,7 +356,6 @@ public class TournamentTree {
         System.out.print(tree.breadthOrder());
         System.out.println();
 
-        // Pergunta ao final se deseja consultar LCA e Caminho
         while (true) {
             System.out.print("Deseja consultar LCA e Caminho de jogadores? (s/n): ");
             String opt = readLineTrim(sc).toLowerCase();
@@ -402,7 +372,7 @@ public class TournamentTree {
                 if (lca == null) {
                     System.out.println("Um dos jogadores não foi encontrado na árvore.");
                 } else {
-                    // mostrar a partida (id) e os dois vencedores das subárvores (ou nomes)
+                    
                     String left = tree.subtreeWinner(lca.left);
                     String right = tree.subtreeWinner(lca.right);
                     System.out.println("LCA encontrado: Partida #" + lca.id + " -> " + left + " vs " + right);
